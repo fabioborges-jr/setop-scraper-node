@@ -1,7 +1,9 @@
-import scraper from "./class/scraper"
+import Scraper from "./class/Scraper"
 
-function main(){
-
+async function main(){
+    const scraper=new Scraper()
+    await scraper.init()
+    await scraper.getRegions()
 }
 
 main()
