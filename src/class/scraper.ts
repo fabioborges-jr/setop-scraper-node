@@ -5,11 +5,8 @@ class scraper{
     page:Page
 
     async init(){
-        this.browser=await puppeteer.launch()
+        this.browser=await puppeteer.launch({headless:false})
         this.page=await this.browser.newPage()
     }
 
-    async goesTo(url:string){
-        await this.page.goto(url)
-    }
 }
