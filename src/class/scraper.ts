@@ -18,7 +18,8 @@ export default class Scraper{
             await this.page.goto(process.env.SETOP_URL)
             await this.page.waitForSelector("#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a")
             console.log("seletores")
-            await this.page.$$eval("div.span-16.content.last > ul > li > a", (elements=> elements.map(element=>console.log(element.textContent))))
+            const regionsSelectors = await this.page.$$eval("div.span-16.content.last > ul > li > a", (elements=> elements.map(element=>element.textContent)))
+            console.log(regionsSelectors)
         } catch (error){
             console.error(error)
         }
