@@ -1,5 +1,7 @@
-function Hello(){
-    console.log("hello world")
+import scraper from "./class/scraper"
+
+function main(){
+
 }
 
-Hello()
+main()
