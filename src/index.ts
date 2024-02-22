@@ -1,4 +1,4 @@
-import Scraper from './class/Scraper'
+import Scraper from './class/scraper'
 
 async function main() {
   const scraper = new Scraper()

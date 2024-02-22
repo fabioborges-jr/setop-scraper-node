@@ -20,13 +20,26 @@ export default class Scraper {
         '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
       )
       console.log('seletores')
-      const regionsSelectors = await this.page.$$eval(
+      const regionsSelectors = await this.page.$$(
         'div.span-16.content.last > ul > li > a',
-        (elements) => elements.map((element) => element.textContent),
       )
-      console.log(regionsSelectors)
+      regionsSelectors[0].click()
+      return regionsSelectors
     } catch (error) {
       console.error(error)
     }
   }
+
+  // async getReferences() {
+  //   if (!this.page || !process.env.SETOP_URL) {
+  //     console.error('this.page ou SETOP_URL não definido')
+  //     return
+  //   }
+  //   try {
+  //     const
+
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 }
