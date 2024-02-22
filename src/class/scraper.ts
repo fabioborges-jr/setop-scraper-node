@@ -1,5 +1,9 @@
 import puppeteer, { Browser, Page } from 'puppeteer'
 
+type references = {
+  region: string[]
+}
+
 export default class Scraper {
   browser?: Browser
   page?: Page
@@ -40,17 +44,23 @@ export default class Scraper {
       return
     }
     try {
-      let references
+      const referencesList: references[] = []
       for (const region of regions) {
-        await region.click()
-        await this.page.waitForSelector('::-p-text(desoneração)')
-        references = await this.page.$$eval(
+        if (region !== regions[0])
+          await this.page.waitForSelector(
+            '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
+          )
+
+        await this.page.waitForSelector('::-p-text(desonera)')
+        const references = await this.page.$$eval(
           '::-p-text(desoneração)',
           (references) => references.map((reference) => reference.textContent),
         )
-        await this.page.goBack()
+        referencesList.push(references)
+        console.log('ativado\n' + referencesList)
+        // await this.page.goBack()
       }
-      console.log(references)
+      console.log(referencesList)
     } catch (error) {
       console.error('deu ruim:' + error)
     }
