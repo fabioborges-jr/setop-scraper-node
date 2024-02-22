@@ -3,7 +3,7 @@ import Scraper from './class/scraper'
 async function main() {
   const scraper = new Scraper()
   await scraper.init()
-  await scraper.getRegions()
+  await scraper.getReferences()
 }
 
 main()

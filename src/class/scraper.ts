@@ -5,8 +5,13 @@ export default class Scraper {
   page?: Page
 
   async init(): Promise<void> {
+    if (!process.env.SETOP_URL) {
+      console.error('SETOP_URL não definido')
+      return
+    }
     this.browser = await puppeteer.launch({ headless: false })
     this.page = await this.browser.newPage()
+    await this.page.goto(process.env.SETOP_URL)
   }
 
   async getRegions() {
@@ -15,7 +20,6 @@ export default class Scraper {
       return
     }
     try {
-      await this.page.goto(process.env.SETOP_URL)
       await this.page.waitForSelector(
         '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
       )
@@ -23,23 +27,33 @@ export default class Scraper {
       const regionsSelectors = await this.page.$$(
         'div.span-16.content.last > ul > li > a',
       )
-      regionsSelectors[0].click()
       return regionsSelectors
     } catch (error) {
       console.error(error)
     }
   }
 
-  // async getReferences() {
-  //   if (!this.page || !process.env.SETOP_URL) {
-  //     console.error('this.page ou SETOP_URL não definido')
-  //     return
-  //   }
-  //   try {
-  //     const
-
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
+  async getReferences() {
+    const regions = await this.getRegions()
+    if (!this.page || !process.env.SETOP_URL || !regions) {
+      console.error('this.page ou SETOP_URL não definido')
+      return
+    }
+    try {
+      let references
+      for (const region of regions) {
+        await region.click()
+        await this.page.waitForSelector('::-p-text(desoneração)')
+        references = await this.page.$$eval(
+          '::-p-text(desoneração)',
+          (references) => references.map((reference) => reference.textContent),
+        )
+        await this.page.goBack()
+      }
+      console.log(references)
+    } catch (error) {
+      console.error('deu ruim:' + error)
+    }
+  }
 }
+//
