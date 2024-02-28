@@ -30,7 +30,6 @@ export default class Scraper {
       await this.page.waitForSelector(
         '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
       )
-      console.log('seletores')
       const regionsSelectors = await this.page.$$(
         'div.span-16.content.last > ul > li > a',
       )
@@ -42,35 +41,33 @@ export default class Scraper {
 
   async getReferences() {
     const regions = await this.getRegions()
+    const referencesList: Reference[][] = []
     if (!this.page || !process.env.SETOP_URL || !regions) {
       console.error('this.page ou SETOP_URL não definido')
       return
     }
     try {
-      const referencesList: Reference[][] = []
       for (const region of regions) {
-        if (region !== regions[0])
-          await this.page.waitForSelector(
-            '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
-          )
+        const element = this.getRegions()[0]
 
-        await this.page.waitForSelector('::-p-text(desonera)')
         const referencesRegion = await this.page.$$eval(
           '::-p-text(desoneração)',
           (references) =>
             references.map((referenceElement) => {
               const reference: Reference = {
                 descriptionHref: referenceElement.textContent,
-                date: referenceElement.textContent,
-                href: referenceElement.textContent,
+                date: referenceElement.getAttribute('href'),
+                href: referenceElement.getAttribute('href'),
                 format: referenceElement.textContent,
               }
               return reference
             }),
         )
         referencesList.push(referencesRegion)
-        console.log('ativado\n' + referencesList)
-        // await this.page.goBack()
+        await this.page.goBack()
+        await this.page.waitForSelector(
+          '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
+        )
       }
       console.log(referencesList)
     } catch (error) {
@@ -78,4 +75,3 @@ export default class Scraper {
     }
   }
 }
-//
