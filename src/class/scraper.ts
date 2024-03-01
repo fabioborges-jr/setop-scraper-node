@@ -21,7 +21,7 @@ export default class Scraper {
     await this.page.goto(process.env.SETOP_URL)
   }
 
-  async getRegions() {
+  async getRegionsElements() {
     if (!this.page || !process.env.SETOP_URL) {
       console.error('this.page ou SETOP_URL não definido')
       return
@@ -30,26 +30,36 @@ export default class Scraper {
       await this.page.waitForSelector(
         '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
       )
-      const regionsSelectors = await this.page.$$(
+      const regionsElements = await this.page.$$(
         'div.span-16.content.last > ul > li > a',
       )
-      return regionsSelectors
+      return regionsElements
     } catch (error) {
       console.error(error)
     }
   }
 
   async getReferences() {
-    const regions = await this.getRegions()
+    const regions = await this.getRegionsElements()
     const referencesList: Reference[][] = []
+
     if (!this.page || !process.env.SETOP_URL || !regions) {
       console.error('this.page ou SETOP_URL não definido')
       return
     }
+
     try {
       for (const region of regions) {
-        const element = this.getRegions()[0]
+        const regionsElements = await this.getRegionsElements()
+        const indexRegion = regions.indexOf(region)
 
+        if (!regionsElements) {
+          console.error('erro')
+          return
+        }
+
+        await regionsElements[indexRegion].click()
+        await this.page.waitForNavigation()
         const referencesRegion = await this.page.$$eval(
           '::-p-text(desoneração)',
           (references) =>
@@ -64,10 +74,8 @@ export default class Scraper {
             }),
         )
         referencesList.push(referencesRegion)
+        console.log(referencesList)
         await this.page.goBack()
-        await this.page.waitForSelector(
-          '#component > div > div > div.span-16.content.last > ul > li:nth-child(1) > a',
-        )
       }
       console.log(referencesList)
     } catch (error) {
