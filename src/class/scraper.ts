@@ -16,7 +16,7 @@ export default class Scraper {
       console.error('SETOP_URL não definido')
       return
     }
-    this.browser = await puppeteer.launch({ headless: false })
+    this.browser = await puppeteer.launch({ headless: true })
     this.page = await this.browser.newPage()
     await this.page.goto(process.env.SETOP_URL)
   }
@@ -74,10 +74,9 @@ export default class Scraper {
             }),
         )
         referencesList.push(referencesRegion)
-        console.log(referencesList)
         await this.page.goBack()
       }
-      console.log(referencesList)
+      return referencesList
     } catch (error) {
       console.error('deu ruim:' + error)
     }
