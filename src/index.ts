@@ -7,7 +7,11 @@ async function main() {
   if (!references) {
     console.error('references not existe')
   } else {
-    references.map((referenceRegion) => console.log(referenceRegion))
+    references.map((referenceRegion) =>
+      referenceRegion.map((reportMonth) =>
+        console.log(reportMonth.href?.split('\\')),
+      ),
+    )
   }
 }
 
