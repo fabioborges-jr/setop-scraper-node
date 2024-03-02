@@ -2,9 +2,7 @@ import puppeteer, { Browser, Page } from 'puppeteer'
 
 type Reference = {
   descriptionHref: string | null
-  date: string | null
   href: string | null
-  format: string | null
 }
 
 export default class Scraper {
@@ -66,9 +64,7 @@ export default class Scraper {
             references.map((referenceElement) => {
               const reference: Reference = {
                 descriptionHref: referenceElement.textContent,
-                date: referenceElement.getAttribute('href'),
                 href: referenceElement.getAttribute('href'),
-                format: referenceElement.textContent,
               }
               return reference
             }),
